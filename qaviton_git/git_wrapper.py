@@ -177,7 +177,10 @@ class Git:
 
     def set_credential_helper(git, helper, *options):
         git.disable_credential_helper()
-        current = git.get_credential_helper()
+        try:
+            current = git.get_credential_helper()
+        except:
+            current = ""
         if helper not in current:
             git(f"config --global credential.helper '{helper}{' ' + ' '.join(options) if options else ''}'")
         return git
