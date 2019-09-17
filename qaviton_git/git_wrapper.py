@@ -97,8 +97,8 @@ class Git:
         git.root = root
         git.url = url
         git.username = username
-        git.password = password
         git.email = email
+        git.password = password
 
     # def _https_handler(git):
     #     protocol = 'https://'
@@ -140,13 +140,13 @@ class Git:
                 git(f'remote add {git.remote} "{escape(value)}"')
             except:
                 log.info("IGNORED fatal: remote origin already exists.")
-                try:
-                    git(f'remote set-url {git.remote} "{escape(value)}"')
-                except:
-                    pass
+                try_to(git, f'remote set-url {git.remote} "{escape(value)}"')
             git._url = value
         else:
-            git._url = try_or_none(git.get_url)
+            git._url = git.get_url()
+        for protocol in git.remote_protocols:
+            if git._url.startswith(protocol):
+                git.remote_protocol = protocol
 
     @username.setter
     def username(git, value):
@@ -155,11 +155,12 @@ class Git:
             # git(f'config --global user.name "{escape(value)}"')
             git._username = value
         else:
-            git._username = try_or_none(git.get_username)
+            git._username = git.get_username()
 
     @password.setter
     def password(git, value):
         if value:
+            # run(f'echo "url={git.remote_protocol}{urlencode(git.username)}:{urlencode(value)}@{git.url[len(git.remote_protocol):]}" | git credential approve')
             run(f'echo "password={escape(value)}" | git credential approve')
             # git(f'config --global user.password "{escape(value)}"')
             git._password = value
@@ -173,7 +174,7 @@ class Git:
             # git(f'config --global user.email "{escape(value)}"')
             git._email = value
         else:
-            git._email = try_or_none(git.get_email)
+            git._email = git.get_email()
 
     def set_credential_helper(git, helper, *options):
         git.disable_credential_helper()
