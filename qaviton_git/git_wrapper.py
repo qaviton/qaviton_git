@@ -195,7 +195,7 @@ class Git:
 
     def has_remote(git): return git('checkout')
     def has_commitable_changes(git): return git('diff')
-    def disable_credential_helper(git): try_to(git, f'config --global --unset credential.helper'); return git
+    def disable_credential_helper(git): try_to(git, f'config --global --unset-all credential.helper'); return git
     def get_url(git)->str: return git(f'config --get remote.{git.remote}.url').decode('utf-8').splitlines()[0]
     def get_username(git)->str: return git('config --get user.name').decode('utf-8').splitlines()[0]
     def get_password(git)->str: return git('config --get user.password').decode('utf-8').splitlines()[0]
