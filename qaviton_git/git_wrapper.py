@@ -36,17 +36,20 @@ class Git:
         password: str,
         email: str,
         *args,
+        **kwargs
     ):
         if url.startswith(cls.remote_protocols[2]):
             url = f'{cls.remote_protocols[2]}{username}:{password}@{url[cls.remote_protocols[2]:]}'
-        git(f'clone', *args, url, path)
-        return cls(
+        git(f'clone', *args, *kwargs.values(), url, path)
+        repo = cls(
             url=url,
             username=username,
             password=password,
             email=email,
             root=path,
         )
+        repo.__call__ = lambda *args: run('cd', path, '&&', 'git', *args)
+        return repo
 
     @classmethod
     def init(
