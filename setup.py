@@ -8,7 +8,7 @@ if __name__ == "__main__":
     with open("README.md", encoding="utf8") as f: long_description = f.read()
     setup(
         name=package_name,
-        version="2019.9.17.16.24.47.330401",
+        version="2019.9.19.14.56.39.691424",
         author="yehonadav",
         author_email="yonadav.barilan@gmail.com",
         description="qaviton git",
@@ -22,6 +22,7 @@ if __name__ == "__main__":
         ],
         install_requires=requirements
     )
+
 
 
 
