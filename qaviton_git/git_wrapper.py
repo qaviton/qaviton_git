@@ -39,7 +39,7 @@ class Git:
         **kwargs
     ):
         if url.startswith(cls.remote_protocols[2]):
-            url = f'{cls.remote_protocols[2]}{username}:{password}@{url[len(cls.remote_protocols[2]):]}'
+            url = f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[len(cls.remote_protocols[2]):]}'
         git(f'clone', *args, *kwargs.values(), url, path)
         repo = cls(
             url=url,
@@ -62,7 +62,7 @@ class Git:
         pull_args: tuple = None,
     ):
         if url.startswith(cls.remote_protocols[2]):
-            url = f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[cls.remote_protocols[2]:]}'
+            url = f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[len(cls.remote_protocols[2]):]}'
         git('init')
         git('remote add origin', url)
         project = cls(url, username, password, email)
