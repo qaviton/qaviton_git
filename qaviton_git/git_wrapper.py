@@ -1,5 +1,5 @@
 import os
-# from urllib.parse import quote_plus as urlencode
+from urllib.parse import quote_plus as urlencode
 from qaviton_helpers import try_to, try_or_none
 from qaviton_processes import run, bs, escape, git
 from qaviton_git.logger import log
@@ -62,7 +62,7 @@ class Git:
         pull_args: tuple = None,
     ):
         if url.startswith(cls.remote_protocols[2]):
-            url = f'{cls.remote_protocols[2]}{username}:{password}@{url[cls.remote_protocols[2]:]}'
+            url = f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[cls.remote_protocols[2]:]}'
         git('init')
         git('remote add origin', url)
         project = cls(url, username, password, email)
