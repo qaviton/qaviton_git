@@ -1,6 +1,5 @@
 import os
-from urllib.parse import quote_plus as urlencode
-from qaviton_helpers import try_to, try_or_none
+from qaviton_helpers import try_to, try_or_none, urlencode
 from qaviton_processes import run, bs, escape, git
 from qaviton_git.logger import log
 
@@ -28,6 +27,12 @@ class Git:
     remote = 'origin'
 
     @classmethod
+    def _make_remote_url(cls, url: str, username: str, password: str):
+        if url.startswith(cls.remote_protocols[2]):
+            return f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[len(cls.remote_protocols[2]):]}'
+        return url
+
+    @classmethod
     def clone(
         cls,
         path: str,
@@ -38,8 +43,7 @@ class Git:
         *args,
         **kwargs
     ):
-        if url.startswith(cls.remote_protocols[2]):
-            url = f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[len(cls.remote_protocols[2]):]}'
+        url = cls._make_remote_url(url, username, password)
         git(f'clone', *args, *kwargs.values(), url, path)
         repo = cls(
             url=url,
@@ -61,8 +65,7 @@ class Git:
         fetch_args: tuple = None,
         pull_args: tuple = None,
     ):
-        if url.startswith(cls.remote_protocols[2]):
-            url = f'{cls.remote_protocols[2]}{urlencode(username)}:{urlencode(password)}@{url[len(cls.remote_protocols[2]):]}'
+        url = cls._make_remote_url(url, username, password)
         git('init')
         git('remote add origin', url)
         project = cls(url, username, password, email)
