@@ -45,14 +45,12 @@ class Git:
     ):
         url = cls._make_remote_url(url, username, password)
         git(f'clone', *args, *kwargs.values(), url, path)
-        repo = cls(
+        repo = Repo(
+            path,
             url=url,
             username=username,
             password=password,
-            email=email,
-            root=path,
-        )
-        repo.__call__ = lambda *args: run('cd', path, '&&', 'git', *args)
+            email=email)
         return repo
 
     @classmethod
@@ -239,3 +237,10 @@ class Git:
     def delete_local(git, branch): git(f'branch -d "{escape(branch)}"'); return git
     def tag(git, name, msg): git(f'tag -a {name} -m "{escape(msg)}"'); return git
     def add(git, arg='.', *args): git('add -f', arg, *args); return git
+
+
+class Repo(Git):
+    def __init__(self, path, url=None, username=None, password=None, email=None):
+        Git.__init__(url, username, password, email, root=path)
+
+    def __call__(self, *args): return run('cd', self.root, '&&', 'git', *args)
