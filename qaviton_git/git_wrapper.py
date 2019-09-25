@@ -241,6 +241,7 @@ class Git:
 
 class Repo(Git):
     def __init__(self, path, url=None, username=None, password=None, email=None):
+        self.root = path
         Git.__init__(self, url, username, password, email, root=path)
 
     def __call__(self, *args): return run('cd', self.root, '&&', 'git', *args)
